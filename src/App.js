@@ -29,11 +29,79 @@ const firestore = firebase.firestore();
 
 // Main App Component
 function App() {
+
+  // useAuthState will tell info about user, if logged in
+  // user will be null if logged out
+  const [user] = useAuthState(auth);
+  
   return (
     <div className="App">
       <header className="App-header"></header>
+
+      <section>
+        {
+          // Show chatroom if user object exists (signed in)
+          // if not, sign in (null is falsy)
+        }
+        {user ? <ChatRoom /> : <SignIn />}
+      </section>
     </div>
   );
+}
+
+function SignIn() {
+  const signInWithGoogle = () => {
+    // Instantiate Google auth provider, trigger sign in pop up
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  };
+  return (
+    // listen for click event, then run sign in code
+    <button onClick={signInWithGoogle}>Sign In with Google</button>
+  );
+}
+
+function SignOut() {
+  // check if current user, if true return button to trigger sign out method
+  return (
+    auth.currentUser && <button onClick={() => auth.signOut()}>Sign Out</button>
+  );
+}
+
+function ChatRoom() {
+  const messagesRef = firestore.collection('messages');
+  const query = messagesRef.orderBy('createdAt').limit(25);
+
+  // make query and listen in real-time with hook
+  // any changes will cause react to re-render
+  const [messages] = useCollectionData(query, { idField: 'id' });
+
+  return (
+    <div>
+      {/*
+            Check if messages array exists
+            iterate over messages array with map() 
+            display each message in a ChatMessage component with props
+          */}
+      {messages &&
+        messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+    </div>
+  );
+}
+
+function ChatMessage(props) {
+  // Destructure message into text & uid
+  const { text, uid } = props.message;
+
+  // use uid to determine if message was sent or received
+  // apply conditional CSS class for styling
+  const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
+
+  return (
+    <div className={`message ${messageClass}`}>
+      <p>{text}</p>
+    </div>
+  )
 }
 
 export default App;
