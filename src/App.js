@@ -1,5 +1,5 @@
 // React Imports
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 // Firebase SDK Imports
@@ -36,7 +36,10 @@ function App() {
   
   return (
     <div className="App">
-      <header className="App-header"></header>
+      <header>
+        <h1>React / Firebase Chat</h1>
+        <SignOut />
+      </header>
 
       <section>
         {
@@ -76,15 +79,49 @@ function ChatRoom() {
   // any changes will cause react to re-render
   const [messages] = useCollectionData(query, { idField: 'id' });
 
+  // Instantiate useState hook, destructuring state & update function 
+  const [formValue, setFormValue] = useState('');
+
+  // Listen to onSubmit event of <form/> below
+  // Take event as argument, send value of event to Firebase
+  const sendMessage = async(e) => {
+    // prevent page refresh on form submit
+    e.preventDefault()
+
+    const {uid} = auth.currentUser;
+    
+    // create new document in Firebase
+    await messagesRef.add({
+      text: formValue,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      uid
+    })
+
+    // Reset input to be blank
+    setFormValue('');
+  }
+
   return (
     <div>
-      {/*
-            Check if messages array exists
-            iterate over messages array with map() 
-            display each message in a ChatMessage component with props
-          */}
-      {messages &&
-        messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+      <div>
+        {/*
+              Check if messages array exists
+              iterate over messages array with map() 
+              display each message in a ChatMessage component with props
+            */}
+        {messages &&
+          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+      </div>
+      <form onSubmit={sendMessage}>
+      {
+        // bind input value to formValue state
+        // typing into the form will trigger the onChange() event
+        // by listening to onChange event, set value  of change to 
+        //    formValue's state
+      }
+        <input value={formValue} onChange={(e) => setFormValue(e.target.value)} placeholder="What's up?" />
+        <button type="submit">send</button>
+      </form>
     </div>
   );
 }
