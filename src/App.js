@@ -37,7 +37,7 @@ function App() {
   return (
     <div className="App">
       <header>
-        <h1>React / Firebase Chat</h1>
+        <h1>Realtime React / Firebase Chat</h1>
         <SignOut />
       </header>
 
@@ -89,19 +89,24 @@ function ChatRoom() {
   // Take event as argument, send value of event to Firebase
   const sendMessage = async(e) => {
     // prevent page refresh on form submit
-    e.preventDefault()
+    e.preventDefault();
 
-    const {uid} = auth.currentUser;
-    
+    const { uid, photoURL, displayName } = auth.currentUser;
+
     // create new document in Firebase
     await messagesRef.add({
       text: formValue,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      uid
-    })
+      uid,
+      displayName,
+      photoURL
+    });
 
     // Reset input to be blank
     setFormValue('');
+
+    // Now scroll back to bottom of chat (newest messages)
+    bottom.current.scrollIntoView({ behavior: 'smooth' });
   }
 
   return (
@@ -136,18 +141,20 @@ function ChatRoom() {
 
 function ChatMessage(props) {
   // Destructure message into text & uid
-  const { text, uid } = props.message;
+  const { text, uid, photoURL, displayName } = props.message;
 
   // use uid to determine if message was sent or received
   // apply conditional CSS class for styling
   const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
 
   return (
-    <div className={`message ${messageClass}`}>
-      <p>{}</p>
-      <p>{text}</p>
+    <div>
+      <div className={`message ${messageClass}`}>
+        <img src={photoURL} alt={`user ${displayName}`}  />
+        <p>{text}</p>
+      </div>
     </div>
-  )
+  );
 }
 
 export default App;
