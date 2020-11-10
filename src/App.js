@@ -1,5 +1,5 @@
 // React Imports
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import './App.css';
 
 // Firebase SDK Imports
@@ -72,6 +72,9 @@ function SignOut() {
 }
 
 function ChatRoom() {
+  // used to automatically scroll on new message
+  const bottom = useRef();
+
   const messagesRef = firestore.collection('messages');
   const query = messagesRef.orderBy('createdAt').limit(25);
 
@@ -105,12 +108,17 @@ function ChatRoom() {
     <div>
       <div>
         {/*
-              Check if messages array exists
-              iterate over messages array with map() 
-              display each message in a ChatMessage component with props
-            */}
+            Check if messages array exists
+            iterate over messages array with map() 
+            display each message in a ChatMessage component with props
+        */}
         {messages &&
           messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+          
+          {
+            // Used to scroll chat to bottom on new message
+          }
+          <div ref={bottom}></div>
       </div>
       <form onSubmit={sendMessage}>
       {
@@ -136,6 +144,7 @@ function ChatMessage(props) {
 
   return (
     <div className={`message ${messageClass}`}>
+      <p>{}</p>
       <p>{text}</p>
     </div>
   )
