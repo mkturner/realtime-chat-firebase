@@ -51,13 +51,12 @@ form {
 
 form button {
   width: 20%;
-  background-color: rgb(56, 56, 143);
+  background-color: rgb(34, 167, 90);
   font-size: 20px;
-  color: rgb(120,90, 180);
+  color: #FFF;
   font-family: Arial, Helvetica, sans-serif;
   outline: none;
 }
-
 
 input {
   line-height: 1.5;
@@ -68,6 +67,36 @@ input {
   outline: none;
   border: none;
   padding: 0 10px;
+}
+
+button {
+  background-color: #282c34;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+.sign-in {
+  color: #282c34;
+  background: white;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+ul, li {
+  text-align: left;
+  list-style: none;
 }
 
 /* Message Styling */

@@ -37,7 +37,7 @@ function App() {
   return (
     <div className="App">
       <header>
-        <h1>Realtime React / Firebase Chat</h1>
+        <h1> React / Firebase Chat</h1>
         <SignOut />
       </header>
 
